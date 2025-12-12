@@ -1,36 +1,58 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# AI Motion Metrics 🏋️‍♂️
 
-## Getting Started
+A real-time, client-side workout tracker built with **Next.js 14** and **TensorFlow.js (MoveNet)**. This application uses computer vision to track your body movements and automatically counts bicep curls.
 
-First, run the development server:
+![Tech Stack](https://img.shields.io/badge/Stack-Next.js%2014%20%7C%20TensorFlow.js%20%7C%20TailwindCSS-blue)
+
+## 🚀 Features
+
+- **Real-time Pose Detection**: Uses the lightning-fast MoveNet model to track 17 body keypoints directly in the browser.
+- **Auto Rep Counting**: Smart state machine logic tracks full range of motion (Extended -> Flexed -> Extended).
+- **Zero Latency Feedback**: Skeleton overlay and rep counter update instantly with no server-side processing.
+- **Privacy First**: All video processing happens locally on your device. No video is ever sent to a server.
+- **Responsive UI**: Optimized for both desktop and mobile use.
+
+## 🛠️ Tech Stack
+
+- **Framework**: [Next.js 14](https://nextjs.org/) (App Router)
+- **AI Model**: [@tensorflow-models/pose-detection](https://github.com/tensorflow/tfjs-models/tree/master/pose-detection) (MoveNet Lightning)
+- **Styling**: [Tailwind CSS](https://tailwindcss.com/)
+- **Webcam**: [react-webcam](https://www.npmjs.com/package/react-webcam)
+
+## 📦 Getting Started
+
+1.  **Clone the repository**
+2.  **Install dependencies**:
+    ```bash
+    npm install
+    ```
+3.  **Run the development server**:
+    ```bash
+    npm run dev
+    ```
+4.  **Open the app**:
+    Navigate to `http://localhost:3000`. Allow camera access when prompted.
+
+## 🏗️ Building for Production
+
+Due to the complex nature of bundling TensorFlow.js browser binaries with Next.js Server Components, we use a specific build command:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+npm run build
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This command wraps `next build --webpack` to ensure the correct handling of binary dependencies.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 📐 How it Works
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Capture**: The webcam feed is captured via `react-webcam`.
+2.  **Detect**: The MoveNet model analyzes the video frame-by-frame to find key body points (Shoulders, Elbows, Wrists, etc.).
+3.  **Calculate**: We calculate the angle of the elbow joint using vector math (`Math.atan2`).
+4.  **Track State**:
+    - **DOWN Phase**: Arm extended (> 160° angle).
+    - **UP Phase**: Arm flexed (< 45° angle).
+    - A rep is counted only when you complete a full cycle: `DOWN` -> `UP` -> `DOWN`.
 
-## Learn More
+## 📝 License
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+MIT
